@@ -16,6 +16,7 @@ import com.pokemon.backend.repository.StatRepository;
 import com.pokemon.backend.repository.TypeRepository;
 import com.pokemon.backend.service.PokemonService;
 import java.util.ArrayList;
+
 import java.util.HashMap;
 
 import java.util.List;
@@ -73,6 +74,7 @@ public class ControllerPokemon {
               apiPokemon.put("id", pokemon.getID());
               apiPokemon.put("height", pokemon.getHeight());
               apiPokemon.put("Weight", pokemon.getWeight());
+              apiPokemon.put("type", pokemon.getTypes());
               apiPokemon.put("image", pokemon.getSprites().getFrontDefault());
               apiPokemon.put("image_animated", pokemon.getSprites().getVersions());
              response.add(apiPokemon);
@@ -89,6 +91,38 @@ public class ControllerPokemon {
             }
           }
           return ResponseEntity.notFound().build();
+    }
+    
+    @GET
+    @Path("/pokemon/page/{numPage}")
+    @Produces("application/json")
+    public ResponseEntity<List> getPagePokemon(@PathParam("numPage") int numPage ){
+         List<Pokemon> listPokemon = pokemonService.findAll();
+        
+         int enIndx = 5 * numPage;
+         int stIndx = enIndx - 5;
+         
+         if(enIndx > listPokemon.size()) {
+             return ResponseEntity.badRequest().build();
+         }
+         
+        List<Pokemon> sliceList = listPokemon.subList(stIndx, enIndx);
+        List<HashMap> response = new ArrayList<>();
+        
+        for(Pokemon pokemon : sliceList){
+               HashMap<String ,Object> apiPokemon = new HashMap<>();
+              apiPokemon.put("name", pokemon.getName());
+              apiPokemon.put("id", pokemon.getID());
+              apiPokemon.put("height", pokemon.getHeight());
+              apiPokemon.put("Weight", pokemon.getWeight());
+              apiPokemon.put("type", pokemon.getTypes());
+              apiPokemon.put("image", pokemon.getSprites().getFrontDefault());
+              apiPokemon.put("image_animated", pokemon.getSprites().getVersions());
+             response.add(apiPokemon);
+          }
+          System.out.println(response);
+          return ResponseEntity.ok(response);
+          
     }
     
     @GET
