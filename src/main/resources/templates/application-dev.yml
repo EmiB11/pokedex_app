@@ -1,0 +1,11 @@
+## YAML Template.
+---
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pokemon
+    username: postgres
+    password: Pass123
+
+  sql:
+    init:
+      mode: always

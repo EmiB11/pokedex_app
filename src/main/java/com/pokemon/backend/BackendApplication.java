@@ -26,8 +26,10 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
+@Profile({"dev","prod"})
 public class BackendApplication {
          
 

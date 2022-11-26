@@ -1,0 +1,20 @@
+## YAML Template.
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  info:
+    env:
+      enabled: true
+
+info:
+  application:
+    name: pokedex-backend
+    description: backend pokemon
+    author: Emi Dev
+    version: '@project.version@'
+spring:
+  profiles:
+    active: dev
