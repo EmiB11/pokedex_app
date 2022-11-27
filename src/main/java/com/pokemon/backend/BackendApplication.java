@@ -29,10 +29,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
-@Profile({"dev","prod"})
 public class BackendApplication {
          
-
+    @Profile({"dev","prod"})  
     public static void main(String[] args) {
 	  ApplicationContext context =   SpringApplication.run(BackendApplication.class, args);
             
