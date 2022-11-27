@@ -9,10 +9,10 @@
     <class>com.pokemon.backend.models.Type</class>
     <shared-cache-mode>ALL</shared-cache-mode>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/pokemon"/>
       <property name="javax.persistence.jdbc.user" value="postgres"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="Pass123"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
