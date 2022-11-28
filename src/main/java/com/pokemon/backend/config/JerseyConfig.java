@@ -4,15 +4,18 @@
  */
 package com.pokemon.backend.config;
 
-import javax.ws.rs.ApplicationPath;
-
+import com.pokemon.backend.controller.ControllerPokemon;
 import org.glassfish.jersey.server.ResourceConfig;
+
 import org.springframework.stereotype.Component;
 
-@ApplicationPath("/")
+import javax.ws.rs.ApplicationPath;
+
+
 @Component
+@ApplicationPath("/")
 public class JerseyConfig extends ResourceConfig {
-   public JerseyConfig(){
-    this.packages("com.pokemon.backend.controller");
+    public JerseyConfig(){
+     register(ControllerPokemon.class);
    }
 }
