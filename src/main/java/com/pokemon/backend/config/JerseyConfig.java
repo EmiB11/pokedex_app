@@ -16,6 +16,6 @@ import javax.ws.rs.ApplicationPath;
 @ApplicationPath("/")
 public class JerseyConfig extends ResourceConfig {
     public JerseyConfig(){
-     register(ControllerPokemon.class);
+    this.packages("com.pokemon.backend.controller");
    }
 }

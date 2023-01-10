@@ -32,6 +32,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -65,60 +66,69 @@ public class ControllerPokemon {
     @Produces("application/json")
     public ResponseEntity<List> getPokemon(@QueryParam("name") String name){
            List<Pokemon> listPokemon = pokemonService.findAll();
-           List<HashMap> response = new ArrayList<>();
+           List<HashMap<String,Object>> response = new ArrayList<>();
            
            if(name == null){
           for(Pokemon pokemon : listPokemon){
-               HashMap<String ,Object> apiPokemon = new HashMap<>();
-              apiPokemon.put("name", pokemon.getName());
-              apiPokemon.put("id", pokemon.getID());
-              apiPokemon.put("height", pokemon.getHeight());
-              apiPokemon.put("Weight", pokemon.getWeight());
-              apiPokemon.put("type", pokemon.getTypes());
-              apiPokemon.put("image", pokemon.getSprites().getFrontDefault());
-              apiPokemon.put("image_animated", pokemon.getSprites().getVersions());
-             response.add(apiPokemon);
+             
+              responsePokemon(pokemon,response);
           }
           System.out.println(response);
           return ResponseEntity.ok(response);
          }
           for(Pokemon pokemon : listPokemon){
-               if(pokemon.getName().equalsIgnoreCase(name)){
-                  HashMap<String ,Object> apiPokemon = new HashMap<>();
-                  apiPokemon.put("pokemon",pokemon);
-                  response.add(apiPokemon);
-                return ResponseEntity.ok(response);
+               if(pokemon.getName().contains(name)){
+                 responsePokemon(pokemon,response);
             }
           }
+          if(!response.isEmpty()) return ResponseEntity.ok(response);
+          
           return ResponseEntity.notFound().build();
     }
     
     @GET
     @Path("/pokemon/page/{numPage}")
     @Produces("application/json")
-    public ResponseEntity<List> getPagePokemon(@PathParam("numPage") int numPage ){
-         List<Pokemon> listPokemon = pokemonService.findAll();
+    public ResponseEntity<List<HashMap<String,Object>>> getPagePokemon(@PathParam("numPage") int numPage ,@QueryParam("filter") String filter ,@QueryParam("filterType") String filterType ){
+         List<Pokemon> listPokemon = new ArrayList<>();
+         
+         if(filter == null){
+             listPokemon = pokemonService.findAll();
+           if(filterType != null){
+              listPokemon = filterByTypes(listPokemon , filterType);
+           }
+         }
+         else if(filter.equals("ASC")){
+             listPokemon = pokemonService.findAll(Sort.by("name"));
+             if(filterType != null){
+                 listPokemon = filterByTypes(listPokemon ,filterType);
+                
+             }
+         }
+         else if(filter.equals("DES")){
+             listPokemon = pokemonService.findAll(Sort.by("name").descending());
+             if(filterType != null){
+                 listPokemon = filterByTypes(listPokemon ,filterType);
+             }
+         }
         
-         int enIndx = 5 * numPage;
-         int stIndx = enIndx - 5;
+         int enIndx = 12 * numPage;
+         int stIndx = enIndx - 12;
+         
+         List<Pokemon> sliceList;
          
          if(enIndx > listPokemon.size()) {
-             return ResponseEntity.badRequest().build();
+           sliceList = listPokemon.subList(stIndx , listPokemon.size());
+         }
+         else{
+             sliceList = listPokemon.subList(stIndx, enIndx);
          }
          
-        List<Pokemon> sliceList = listPokemon.subList(stIndx, enIndx);
-        List<HashMap> response = new ArrayList<>();
+        
+        List<HashMap<String,Object>> response = new ArrayList<>();
         
         for(Pokemon pokemon : sliceList){
-               HashMap<String ,Object> apiPokemon = new HashMap<>();
-              apiPokemon.put("name", pokemon.getName());
-              apiPokemon.put("id", pokemon.getID());
-              apiPokemon.put("height", pokemon.getHeight());
-              apiPokemon.put("Weight", pokemon.getWeight());
-              apiPokemon.put("type", pokemon.getTypes());
-              apiPokemon.put("image", pokemon.getSprites().getFrontDefault());
-              apiPokemon.put("image_animated", pokemon.getSprites().getVersions());
-             response.add(apiPokemon);
+            responsePokemon(pokemon,response);
           }
           System.out.println(response);
           return ResponseEntity.ok(response);
@@ -240,5 +250,32 @@ public class ControllerPokemon {
        List<Type> types = typeService.findAll();
        
        return ResponseEntity.ok(types);
+   }
+   public void responsePokemon(Pokemon pokemon , List<HashMap<String,Object>> response){
+       HashMap<String ,Object> apiPokemon = new HashMap<>();
+       apiPokemon.put("name" ,pokemon.getName());
+       apiPokemon.put("id" ,pokemon.getID());
+       apiPokemon.put("height" ,pokemon.getHeight());
+       apiPokemon.put("weight" ,pokemon.getWeight());
+       apiPokemon.put("types" ,pokemon.getTypes());
+       apiPokemon.put("image" ,pokemon.getSprites());
+       apiPokemon.put("image_animated" ,pokemon.getSprites().getVersions());
+       
+       response.add(apiPokemon);
+       
+   }
+   
+   public List<Pokemon> filterByTypes(List<Pokemon> allPokemons , String filterType){
+       List<Pokemon> listFilter = new ArrayList<>();
+       
+       for(Pokemon pokemon : allPokemons){
+           List<Type> auxFilter = pokemon.getTypes();
+           for(Type type : auxFilter){
+               if(type.getType().equals(filterType)){
+                   listFilter.add(pokemon);
+               }
+           }
+       }
+       return listFilter;
    }
 }

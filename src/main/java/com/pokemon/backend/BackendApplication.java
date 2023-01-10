@@ -45,7 +45,7 @@ public class BackendApplication {
             String api = "https://pokeapi.co/api/v2/pokemon/";
             String urlDescription = "https://pokeapi.co/api/v2/pokemon-species/";
             
-             while(pokeID <= 10){
+             while(pokeID <= 100){
             
                 Pokemon newPoke = new Pokemon();
                 
